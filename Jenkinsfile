@@ -1,28 +1,27 @@
 pipeline {
     agent any
 
+    tools {
+        nodejs 'NodeJS_16' // This should match the name you configured in Global Tool Configuration
+    }
+
     stages {
-        // Step 4: Build Stage
         stage('Build') {
             steps {
-                // Installing dependencies and building the app
+                // npm will be available now that Node.js is installed
                 sh 'npm install'
                 sh 'npm run build'
             }
         }
 
-        // Step 5: Test Stage
         stage('Test') {
             steps {
-                // Running tests
                 sh 'npm run test'
             }
         }
 
-        // Step 7: Deploy Stage
         stage('Deploy') {
             steps {
-                // Deploying the app using Docker
                 sh 'docker build -t notesapp .'
                 sh 'docker run -d -p 8080:80 notesapp'
             }
@@ -31,7 +30,6 @@ pipeline {
 
     post {
         always {
-            // Archiving build artifacts (optional)
             archiveArtifacts artifacts: '**/build/**'
         }
         success {
