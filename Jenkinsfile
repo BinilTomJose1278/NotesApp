@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS_16' // Make sure the Node.js version is configured in Jenkins
+        nodejs 'NodeJS_16' // Ensure this matches the NodeJS installation name you set in Jenkins
     }
 
     stages {
@@ -25,7 +25,7 @@ pipeline {
             steps {
                 // Run tests
                 echo 'Running tests...'
-                sh 'npm test' // Assuming you have tests set up in your project
+                sh 'npm test'
             }
         }
 
