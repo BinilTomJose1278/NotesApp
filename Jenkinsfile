@@ -2,25 +2,20 @@ pipeline {
     agent any
 
     tools {
-        nodejs 'NodeJS_16' // This should match the name you configured in Global Tool Configuration
+        nodejs 'NodeJS_16' // This should still be included to install Node.js dependencies
     }
 
     stages {
         stage('Install Dependencies') {
             steps {
+                // Installs Node.js dependencies
                 sh 'npm install'
             }
         }
 
-        // Remove or comment the Test stage if no tests are available
-        // stage('Test') {
-        //     steps {
-        //         sh 'npm run test'
-        //     }
-        // }
-
         stage('Deploy') {
             steps {
+                // Builds and runs the Docker container
                 sh 'docker build -t notesapp .'
                 sh 'docker run -d -p 8080:80 notesapp'
             }
