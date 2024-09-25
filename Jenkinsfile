@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'personal-data-protection-app:latest' // Example image name
+        DOCKER_IMAGE = 'note-taking-app:latest' // Example image name
         GIT_URL = 'https://github.com/BinilTomJose1278/NotesApp.git' // Your repository URL
     }
 
