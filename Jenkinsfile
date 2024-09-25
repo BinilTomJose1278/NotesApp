@@ -7,76 +7,76 @@ pipeline {
     }
 
     stages {
+        // Stage 1: Build
         stage('Build') {
             steps {
                 echo 'Building the project...'
-                // Replace bat with sh for Linux
-                sh 'echo Building the project on Linux'
-                // Example for npm build or Docker build if you're using Node.js or Docker:
-                // sh 'npm install'
-                // sh 'docker build -t $DOCKER_IMAGE .'
+                // Install project dependencies using npm
+                sh 'npm install'
             }
         }
 
+        // Stage 2: Test
         stage('Test') {
             steps {
                 echo 'Running tests...'
-                // Replace bat with sh for Linux
-                sh 'echo Running tests on Linux'
-                // Example for Node.js testing:
-                // sh 'npm test'
+                // Running tests (e.g., for Node.js)
+                sh 'npm test'
             }
         }
 
+        // Stage 3: Code Quality Analysis
         stage('Code Quality Analysis') {
             steps {
                 echo 'Running Code Quality Analysis...'
-                // Replace bat with sh for Linux
-                sh 'echo Running SonarQube analysis on Linux'
-                // If using SonarQube or another tool, integrate here
+                // Here you would run SonarQube, ESLint, or other code quality tools
+                // Example:
+                // sh 'sonar-scanner'
             }
         }
 
+        // Stage 4: Deploy (Docker-based)
         stage('Deploy') {
-    steps {
-        echo 'Deploying the application...'
-        
-        // Build the Docker image using the Dockerfile
-        sh 'docker build -t $DOCKER_IMAGE .'
-        
-        // Run the Docker container and map the port 8080 on the host to port 80 on the container
-        sh 'docker run -d -p 8080:80 $DOCKER_IMAGE'
-    }
-}
+            steps {
+                echo 'Deploying the application...'
+                // Build the Docker image using the Dockerfile
+                sh 'docker build -t $DOCKER_IMAGE .'
 
+                // Run the Docker container and map the port 8080 on the host to port 80 on the container
+                sh 'docker run -d -p 8080:80 $DOCKER_IMAGE'
+            }
+        }
 
+        // Stage 5: Release (Optional)
         stage('Release') {
             steps {
                 echo 'Releasing the application...'
-                // Replace bat with sh for Linux
-                sh 'echo Releasing the application to production on Linux'
-                // Integrate release management commands (e.g., AWS CodeDeploy, Octopus)
+                // If you're using any release tools (e.g., AWS CodeDeploy), you can integrate them here
             }
         }
 
+        // Stage 6: Monitoring & Alerting (Optional)
         stage('Monitoring & Alerting') {
             steps {
                 echo 'Setting up Monitoring and Alerting...'
-                // Replace bat with sh for Linux
-                sh 'echo Monitoring production environment on Linux'
                 // Integrate monitoring tools like Datadog or New Relic here
             }
         }
     }
 
     post {
+        // Always clean up the workspace after the pipeline finishes
         always {
             echo 'Cleaning up workspace...'
             cleanWs()
         }
+
+        // Success message
         success {
             echo 'Pipeline completed successfully!'
         }
+
+        // Failure message
         failure {
             echo 'Pipeline failed!'
         }
