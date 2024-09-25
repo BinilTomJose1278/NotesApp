@@ -38,14 +38,17 @@ pipeline {
         }
 
         stage('Deploy') {
-            steps {
-                echo 'Deploying the application...'
-                // Replace bat with sh for Linux
-                sh 'echo Deploying the application on Linux'
-                // Example for Docker Compose:
-                // sh 'docker-compose up -d'
-            }
-        }
+    steps {
+        echo 'Deploying the application...'
+        
+        // Build the Docker image using the Dockerfile
+        sh 'docker build -t $DOCKER_IMAGE .'
+        
+        // Run the Docker container and map the port 8080 on the host to port 80 on the container
+        sh 'docker run -d -p 8080:80 $DOCKER_IMAGE'
+    }
+}
+
 
         stage('Release') {
             steps {
