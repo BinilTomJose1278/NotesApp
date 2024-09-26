@@ -1,69 +1,52 @@
 pipeline {
     agent any
-
     environment {
-        DOCKER_IMAGE = 'note-taking-app:latest' // Example image name
-        GIT_URL = 'https://github.com/BinilTomJose1278/NotesApp.git' // Your repository URL
+        DOCKER_IMAGE = 'note-taking-app:latest'
+        GIT_URL = 'https://github.com/BinilTomJose1278/NotesApp.git'
     }
-
     stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out code from Git...'
+                git url: "${GIT_URL}"
+            }
+        }
         stage('Build') {
             steps {
-                echo 'Building the project...'
-                // Use 'sh' instead of 'bat' for Linux
-                sh 'echo Building the project on Linux'
-                // Example for npm build or Docker build if you're using Node.js or Docker:
-                // sh 'npm install'
-                // sh 'docker build -t $DOCKER_IMAGE .'
+                echo 'Installing dependencies...'
+                sh 'npm install'
             }
         }
-
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                // Use 'sh' to run tests on Linux
-                sh 'echo Running tests on Linux'
-                // Example for Node.js testing:
-                // sh 'npm test'
-            }
-        }
-
         stage('Code Quality Analysis') {
             steps {
                 echo 'Running Code Quality Analysis...'
-                // Example SonarQube analysis for Linux:
-                sh 'echo Running SonarQube analysis'
-                // If using SonarQube or another tool, integrate here
+                // You can add a linting step here if you set up a linter
+                // sh 'npm run lint'
             }
         }
-
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                script {
+                    docker.build("${DOCKER_IMAGE}")
+                }
+            }
+        }
         stage('Deploy') {
             steps {
                 echo 'Deploying the application...'
-                // Use 'sh' for deployment commands on Linux
-                sh 'echo Deploying the application on Linux'
-                // Example for Docker Compose:
-                // sh 'docker-compose up -d'
+                script {
+                    docker.image("${DOCKER_IMAGE}").run('-d --name note-taking-app -p 8080:3000')
+                }
             }
         }
-
-        stage('Release') {
-            steps {
-                echo 'Releasing the application...'
-                sh 'echo Releasing the application to production'
-                // Integrate release management commands (e.g., AWS CodeDeploy, Octopus)
-            }
-        }
-
         stage('Monitoring & Alerting') {
             steps {
                 echo 'Setting up Monitoring and Alerting...'
-                sh 'echo Monitoring production environment on Linux'
-                // Integrate monitoring tools like Datadog or New Relic here
+                // Add monitoring setup here if needed
             }
         }
     }
-
     post {
         always {
             echo 'Cleaning up workspace...'
