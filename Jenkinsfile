@@ -2,12 +2,12 @@ pipeline {
     agent any
     
     tools {
-        nodejs 'NodeJS_17' // Make sure this matches the name of your NodeJS installation in Jenkins
+        nodejs 'NodeJS' // Make sure this matches your NodeJS installation name in Jenkins
     }
     
     environment {
-        DOCKER_HOST = 'tcp://localhost:2375'  // Docker Desktop uses this by default
-        PATH = "$PATH;C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\ProgramData\\DockerDesktop\\bin"  // Docker path for Windows
+        DOCKER_HOST = 'tcp://localhost:2375'  // Exposing Docker daemon on Windows
+        PATH = "$PATH;C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\ProgramData\\DockerDesktop\\bin"  // Docker paths for Windows
     }
     
     stages {
