@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    tools {
+        nodejs 'NodeJS_17' // This should match the name of your Node.js installation in Jenkins
+    }
     environment {
         DOCKER_IMAGE = 'note-taking-app:latest'
         GIT_URL = 'https://github.com/BinilTomJose1278/NotesApp.git'
@@ -14,13 +17,15 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Installing dependencies...'
+                sh 'npm --version'
+                sh 'node --version'
                 sh 'npm install'
             }
         }
         stage('Code Quality Analysis') {
             steps {
                 echo 'Running Code Quality Analysis...'
-                // You can add a linting step here if you set up a linter
+                // Add linting step here if you set up a linter
                 // sh 'npm run lint'
             }
         }
