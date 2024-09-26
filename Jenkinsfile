@@ -1,7 +1,12 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'node:14-alpine' // Use an official Node.js image
+            args '-p 3000:3000' // Map port 3000 for your app
+        }
+    }
     environment {
-        DOCKER_IMAGE = 'note-taking-app:latest'
+        HOME = '.'
         GIT_URL = 'https://github.com/BinilTomJose1278/NotesApp.git'
     }
     stages {
@@ -32,17 +37,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying the application...'
-                script {
-                    // Stop and remove any existing container
-                    sh 'docker stop note-taking-app || true'
-                    sh 'docker rm note-taking-app || true'
-                    
-                    // Build the Docker image
-                    sh 'docker build -t $DOCKER_IMAGE .'
-                    
-                    // Run the Docker container
-                    sh 'docker run -d --name note-taking-app -p 8080:80 $DOCKER_IMAGE'
-                }
+                sh 'npm start &' // Start your application in the background
             }
         }
         stage('Release') {
