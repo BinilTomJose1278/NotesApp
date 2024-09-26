@@ -5,6 +5,11 @@ pipeline {
         nodejs 'NodeJS_17' // Make sure this matches the name of your NodeJS installation in Jenkins
     }
     
+    environment {
+        DOCKER_HOST = 'tcp://localhost:2375'  // Docker Desktop uses this by default
+        PATH = "$PATH;C:\\Program Files\\Docker\\Docker\\resources\\bin;C:\\ProgramData\\DockerDesktop\\bin"  // Docker path for Windows
+    }
+    
     stages {
         stage('Checkout') {
             steps {
@@ -16,9 +21,9 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Installing dependencies...'
-                sh 'npm --version'
-                sh 'node --version'
-                sh 'npm install'
+                bat 'npm --version'
+                bat 'node --version'
+                bat 'npm install'
             }
         }
         
@@ -29,10 +34,23 @@ pipeline {
             }
         }
         
+        stage('Verify Docker') {
+            steps {
+                script {
+                    try {
+                        bat 'docker info'
+                        echo 'Docker is available'
+                    } catch (Exception e) {
+                        error 'Docker is not available. Make sure Docker Desktop is running.'
+                    }
+                }
+            }
+        }
+        
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("notesapp:${env.BUILD_ID}")
+                    bat 'docker build -t notesapp:%BUILD_ID% .'
                 }
             }
         }
