@@ -1,19 +1,14 @@
 pipeline {
     agent any
 
-    tools {
-        nodejs 'NodeJS_17' // Ensure this matches the NodeJS installation name you set in Jenkins
     environment {
-        DOCKER_IMAGE = 'note-app:latest' // Example image name
+        DOCKER_IMAGE = 'personal-data-protection-app:latest' // Example image name
         GIT_URL = 'https://github.com/BinilTomJose1278/NotesApp.git' // Your repository URL
     }
 
     stages {
-        stage('Install Dependencies') {
         stage('Build') {
             steps {
-                // Install Node.js dependencies
-                sh 'npm install'
                 echo 'Building the project...'
                 // For Windows, use 'bat' instead of 'sh'
                 bat 'echo Building the project on Windows'
@@ -23,12 +18,8 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image') {
         stage('Test') {
             steps {
-                // Build Docker image
-                echo 'Building Docker image...'
-                sh 'docker build -t notesapp .'
                 echo 'Running tests...'
                 // Use 'bat' to run tests on Windows
                 bat 'echo Running tests on Windows'
@@ -36,7 +27,8 @@ pipeline {
                 // bat 'npm test'
             }
         }
- stage('Code Quality Analysis') {
+
+        stage('Code Quality Analysis') {
             steps {
                 echo 'Running Code Quality Analysis...'
                 // Example SonarQube analysis for Windows:
@@ -45,12 +37,8 @@ pipeline {
             }
         }
 
-        stage('Test') {
         stage('Deploy') {
             steps {
-                // Run tests
-                echo 'Running tests...'
-                sh 'npm test'
                 echo 'Deploying the application...'
                 // For Docker Compose or any other Windows-friendly deployment tool
                 bat 'echo Deploying the application on Windows'
@@ -59,18 +47,14 @@ pipeline {
             }
         }
 
-        stage('Deploy to Staging') {
         stage('Release') {
             steps {
-                // Deploy to a staging environment
-                echo 'Deploying to staging...'
-                sh 'docker run -d -p 8080:80 --name notesapp-staging notesapp'
                 echo 'Releasing the application...'
                 bat 'echo Releasing the application to production'
                 // Integrate release management commands (e.g., AWS CodeDeploy, Octopus)
             }
         }
-    }
+
         stage('Monitoring & Alerting') {
             steps {
                 echo 'Setting up Monitoring and Alerting...'
@@ -78,7 +62,7 @@ pipeline {
                 // Integrate monitoring tools like Datadog or New Relic here
             }
         }
-  }
+    }
 
     post {
         always {
@@ -89,7 +73,6 @@ pipeline {
             echo 'Pipeline completed successfully!'
         }
         failure {
-            echo 'Pipeline failed. Check the logs for details.'
             echo 'Pipeline failed!'
         }
     }
