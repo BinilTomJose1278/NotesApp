@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
-  "test": "echo \"No tests available\""
-},
-
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"No tests available\""
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -14,7 +14,7 @@
     "connect-mongo": "^5.1.0",
     "dotenv": "^16.4.5",
     "ejs": "^3.1.10",
-    "express": "^4.19.2",
+    "express": "^4.21.0",
     "express-ejs-layouts": "^2.5.1",
     "express-session": "^1.18.0",
     "method-override": "^3.0.0",

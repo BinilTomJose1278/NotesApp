@@ -1,23 +1,35 @@
-# Use an official Node runtime as the parent image
-FROM node:14
+# Use Node.js 18 as the base image
+FROM node:18
 
-# Set the working directory in the container to /app
-WORKDIR /app
+# Create the necessary directories and set ownership for the node user
+RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 
-# Copy package.json and package-lock.json to the working directory
+# Set the working directory to /home/node/app
+WORKDIR /home/node/app
+
+# Switch to the root user to run npm install as root (avoids permission issues)
+USER root
+
+# Copy package.json and package-lock.json first to leverage Docker caching
 COPY package*.json ./
 
-# Install any needed packages specified in package.json
+# Install the dependencies as root user
 RUN npm install
 
-# Copy the rest of the application code to the working directory
+# Switch ownership back to node user
+RUN chown -R node:node /home/node/app
+
+# Copy the rest of your application code to the container
 COPY . .
 
-# Make port 3000 available to the world outside this container
+# Ensure correct ownership of the app directory and its contents
+RUN chown -R node:node /home/node/app
+
+# Switch to the non-root node user
+USER node
+
+# Expose the port the application runs on (3000 in your index.js)
 EXPOSE 3000
 
-# Define environment variable
-ENV NODE_ENV=production
-
-# Run the app when the container launches
-CMD ["node", "index.js"]
+# Command to start the application
+CMD [ "npm", "start" ]

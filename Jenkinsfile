@@ -1,79 +1,76 @@
 pipeline {
     agent any
-    
-    tools {
-        nodejs 'NodeJS_17'  // Ensure this matches your NodeJS installation in Jenkins
-    }
-    
+
     environment {
-        DOCKER_HOST = 'tcp://localhost:2375'  // Docker Desktop configuration for Windows
-        PATH = "$PATH:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"  // Linux paths due to WSL2
+        DOCKER_IMAGE = 'note-taking-app:latest' // Example image name
+        GIT_URL = 'https://github.com/BinilTomJose1278/NotesApp.git' // Your repository URL
     }
-    
+
     stages {
-        stage('Checkout') {
-            steps {
-                echo 'Checking out code from Git...'
-                git 'https://github.com/BinilTomJose1278/NotesApp.git'
-            }
-        }
-        
         stage('Build') {
             steps {
-                echo 'Installing dependencies...'
-                sh 'npm --version'
-                sh 'node --version'
-                sh 'npm install'
+                echo 'Building the project...'
+                // Use 'sh' instead of 'bat' for Linux
+                sh 'echo Building the project on Linux'
+                // Example for npm build or Docker build if you're using Node.js or Docker:
+                // sh 'npm install'
+                // sh 'docker build -t $DOCKER_IMAGE .'
             }
         }
-        
+
+        stage('Test') {
+            steps {
+                echo 'Running tests...'
+                // Use 'sh' to run tests on Linux
+                sh 'echo Running tests on Linux'
+                // Example for Node.js testing:
+                // sh 'npm test'
+            }
+        }
+
         stage('Code Quality Analysis') {
             steps {
                 echo 'Running Code Quality Analysis...'
-                // Add your code quality analysis steps here
+                // Example SonarQube analysis for Linux:
+                sh 'echo Running SonarQube analysis'
+                // If using SonarQube or another tool, integrate here
             }
         }
-        
-        stage('Verify Docker') {
-            steps {
-                script {
-                    try {
-                        sh 'docker info'
-                        echo 'Docker is available'
-                    } catch (Exception e) {
-                        error 'Docker is not available. Make sure Docker Desktop is running.'
-                    }
-                }
-            }
-        }
-        
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    sh 'docker build -t notesapp:${BUILD_ID} .'
-                }
-            }
-        }
-        
+
         stage('Deploy') {
             steps {
-                echo 'Deploying...'
-                // Add your deployment steps here
+                echo 'Deploying the application...'
+                // Use 'sh' for deployment commands on Linux
+                sh 'echo Deploying the application on Linux'
+                // Example for Docker Compose:
+                // sh 'docker-compose up -d'
             }
         }
-        
+
+        stage('Release') {
+            steps {
+                echo 'Releasing the application...'
+                sh 'echo Releasing the application to production'
+                // Integrate release management commands (e.g., AWS CodeDeploy, Octopus)
+            }
+        }
+
         stage('Monitoring & Alerting') {
             steps {
-                echo 'Setting up monitoring and alerting...'
-                // Add your monitoring and alerting setup here
+                echo 'Setting up Monitoring and Alerting...'
+                sh 'echo Monitoring production environment on Linux'
+                // Integrate monitoring tools like Datadog or New Relic here
             }
         }
     }
-    
+
     post {
         always {
             echo 'Cleaning up workspace...'
             cleanWs()
+        }
+        success {
+            echo 'Pipeline completed successfully!'
         }
         failure {
             echo 'Pipeline failed!'
