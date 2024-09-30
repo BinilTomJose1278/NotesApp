@@ -1,12 +1,27 @@
 pipeline {
     agent any
+    
     stages {
-        stage('Check Docker') {
+        stage('Checkout') {
             steps {
-                script {
-                    sh 'docker --version'
-                }
+                git branch: 'master', url: ''
             }
         }
+
+        stage('Build Docker Image') {
+            steps {
+               
+                    script {
+                        sh 'docker build -t biniltomjose12780/nodejs-image-demo .'
+                    }
+            }
+        }
+        stage('Code Quality Analysis') {
+    steps {
+       
+            script {
+                sh 'sonar-scanner' 
+            }
     }
 }
+
