@@ -1,28 +1,14 @@
 pipeline {
     agent any
-
     stages {
-        stage('Build') {
+        stage('Test Docker') {
             steps {
                 script {
-                    docker.build('biniltomjose12780/nodejs-image-demo')
-                }
-            }
-        }
-
-        stage('Test') {
-            steps {
-                script {
-                    sh 'npm install'
-                    sh 'npm test'
-                }
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                script {
-                    docker.image('biniltomjose12780/nodejs-image-demo').run('-p 3000:3000')
+                    if (isUnix()) {
+                        sh 'docker --version'
+                    } else {
+                        bat 'docker --version'
+                    }
                 }
             }
         }
