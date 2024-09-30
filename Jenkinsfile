@@ -4,11 +4,7 @@ pipeline {
         stage('Check Docker') {
             steps {
                 script {
-                    if (isUnix()) {
-                        sh 'docker --version'
-                    } else {
-                        bat 'docker --version'
-                    }
+                    sh 'docker --version'
                 }
             }
         }
