@@ -3,6 +3,11 @@ pipeline {
         label 'docker-agent'  // Replace with your specific node label if necessary
     }
 
+    environment {
+        // Set your MongoDB URI environment variable here
+        MONGODB_URI = 'mongodb+srv://admin03:1234567890@userauthenticationapi.atdala8.mongodb.net/'  // Replace with your MongoDB URI
+    }
+
     stages {
         // Stage 1: Checkout code from Git repository
         stage('Checkout') {
@@ -27,7 +32,7 @@ pipeline {
                     // Install dependencies
                     bat 'npm install'
                     
-                    // Run the tests
+                    // Run the tests with the environment variable
                     bat 'npm test'
                 }
             }
