@@ -1,6 +1,8 @@
 pipeline {
-    agent any
-    
+   agent {
+        label 'docker-agent'  // Replace with the label you assigned
+    }
+
     stages {
         stage('Checkout') {
             steps {
