@@ -11,7 +11,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    sh 'docker build -t biniltomjose12780/nodejs-image-demo .'
+                    bat 'docker build -t biniltomjose12780/nodejs-image-demo .'
                 }
             }
         }
@@ -19,7 +19,7 @@ pipeline {
         stage('Code Quality Analysis') {
             steps {
                 script {
-                    sh 'sonar-scanner' 
+                    bat 'sonar-scanner' 
                 }
             }
         }
