@@ -11,14 +11,14 @@ describe("Express App", () => {
   });
 
   // Test 404 for an unknown route
-  it.skip("should return 404 for an unknown route", async () => {
+  it("should return 404 for an unknown route", async () => {
     const res = await request(app).get("/non-existing-route");
     expect(res.statusCode).toEqual(404);
     expect(res.text).toContain("Page not Found!"); // Adjust based on actual content of your 404 page
   });
 
   // Test authentication redirect for dashboard (GET /dashboard)
-  it.skip("should redirect to login if not authenticated on GET /dashboard", async () => {
+  it("should redirect to login if not authenticated on GET /dashboard", async () => {
     const res = await request(app).get("/dashboard");
     expect(res.statusCode).toEqual(401); // Expecting a redirect to login
   });
