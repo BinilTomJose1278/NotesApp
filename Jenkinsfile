@@ -16,22 +16,11 @@ pipeline {
             }
         }
 
-        // Stage 2: Build Docker image in parallel with installing dependencies
-        stage('Build and Install in Parallel') {
-            parallel {
-                stage('Build Docker Image') {
-                    steps {
-                        script {
-                            bat 'docker build -t biniltomjose12780/nodejs-image-demo .'  // Replace with your Docker image details
-                        }
-                    }
-                }
-                stage('Install Dependencies') {
-                    steps {
-                        script {
-                            bat 'npm install'
-                        }
-                    }
+        // Stage 2: Build Docker image
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    bat 'docker build -t biniltomjose12780/nodejs-image-demo .'  // Replace with your Docker image details
                 }
             }
         }
@@ -40,8 +29,10 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    // Run the tests with the environment variable
-                    bat 'npm test'
+                    // Install dependencies
+                    bat 'npm install'
+                    
+                    // Run the tests with the forceExit option to ensure tests don't hang
                     bat 'npm test -- --forceExit --detectOpenHandles'
                 }
             }
