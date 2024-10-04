@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        label 'docker-agent'  // Use your specific node label
+        label 'docker-agent'  // Replace with your specific node label if necessary
     }
 
     environment {
@@ -8,7 +8,7 @@ pipeline {
     }
 
     tools {
-        sonarScanner 'SonarQubeScanner'  // Use the exact name of your SonarQube Scanner setup
+        'hudson.plugins.sonar.SonarRunnerInstallation' 'SonarQubeScanner'  // Correct tool type
     }
 
     stages {
@@ -38,10 +38,11 @@ pipeline {
         stage('Code Quality Analysis') {
             steps {
                 script {
-                    withSonarQubeEnv('SonarQube') {  // This should match the name of your SonarQube server setup in Jenkins
+                    withSonarQubeEnv('SonarQube') {  // Name of your SonarQube server in Jenkins
                         withCredentials([string(credentialsId: 'SonarQubeAuthenticationToken', variable: 'SONAR_TOKEN')]) {
+                            // Instead of calling sonar-scanner directly, use the installed scanner tool
                             bat '''
-                                sonar-scanner ^
+                                SonarQubeScanner.bat ^
                                 -Dsonar.projectKey=NotesApp ^
                                 -Dsonar.sources=. ^
                                 -Dsonar.host.url=%SONARQUBE_SERVER% ^
