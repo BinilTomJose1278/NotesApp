@@ -43,13 +43,13 @@ pipeline {
                 script {
                     withSonarQubeEnv('SonarQube') {
                         withCredentials([string(credentialsId: 'SonarQubeAuthenticationToken', variable: 'SONAR_TOKEN')]) {
-                            bat """
-                                sonar-scanner \
-                                -Dsonar.projectKey=NotesApp \
-                                -Dsonar.sources=. \
-                                -Dsonar.host.url=$SONARQUBE_SERVER \
-                                -Dsonar.login=$SONAR_TOKEN
-                            """
+                            bat '''
+                                sonar-scanner ^
+                                -Dsonar.projectKey=NotesApp ^
+                                -Dsonar.sources=. ^
+                                -Dsonar.host.url=%SONARQUBE_SERVER% ^
+                                -Dsonar.login=%SONAR_TOKEN%
+                            '''
                         }
                     }
                 }
