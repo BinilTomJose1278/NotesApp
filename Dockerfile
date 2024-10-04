@@ -1,35 +1,24 @@
-# Use Node.js 18 as the base image
-FROM node:18
+# Use the official Node.js 18 Alpine image
+FROM node:18-alpine
 
-# Create the necessary directories and set ownership for the node user
-RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
-
-# Set the working directory to /home/node/app
+# Set the working directory inside the container
 WORKDIR /home/node/app
 
-# Switch to the root user to run npm install as root (avoids permission issues)
-USER root
-
-# Copy package.json and package-lock.json first to leverage Docker caching
+# Install dependencies first to leverage Docker caching
+# Copy only the package.json and package-lock.json
 COPY package*.json ./
 
-# Install the dependencies as root user
-RUN npm install
+# Install production dependencies (add --production to avoid dev dependencies)
+RUN npm install --production
 
-# Switch ownership back to node user
-RUN chown -R node:node /home/node/app
-
-# Copy the rest of your application code to the container
+# Copy the rest of the application code
 COPY . .
 
-# Ensure correct ownership of the app directory and its contents
-RUN chown -R node:node /home/node/app
-
-# Switch to the non-root node user
-USER node
-
-# Expose the port the application runs on (3000 in your index.js)
+# Expose the port that your application will run on
 EXPOSE 3000
 
-# Command to start the application
+# Use a non-root user for running the application
+USER node
+
+# Command to run the application
 CMD [ "npm", "start" ]
