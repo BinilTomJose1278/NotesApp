@@ -8,7 +8,8 @@ pipeline {
     }
 
     tools {
-        sonarQube 'SonarQubeScanner'  // This should match the name you gave when adding SonarQube Scanner in Global Tool Configuration
+        // Corrected tool type for SonarQube Scanner
+        'hudson.plugins.sonar.SonarRunnerInstallation' 'SonarQubeScanner'
     }
 
     stages {
