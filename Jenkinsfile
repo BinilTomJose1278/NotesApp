@@ -1,14 +1,14 @@
 pipeline {
     agent {
-        label 'docker-agent'  // Replace with your specific node label if necessary
+        label 'docker-agent'
     }
 
     environment {
-        SONARQUBE_SERVER = 'SonarQube'  // The name of the SonarQube server configured in Jenkins
+        SONAR_TOKEN = credentials('SonarQubeAuthenticationToken')  // Use the correct SonarQube token ID
     }
 
     tools {
-        'hudson.plugins.sonar.SonarRunnerInstallation' 'SonarQubeScanner'  // Correct tool type
+        'hudson.plugins.sonar.SonarRunnerInstallation' 'SonarQubeScanner'  // Correct tool type for SonarQube Scanner
     }
 
     stages {
@@ -35,13 +35,17 @@ pipeline {
             }
         }
 
-
-        stage('Deploy to Docker Container') {
-            when {
-                expression {
-                    currentBuild.result == null || currentBuild.result == 'SUCCESS'
+        stage('Code Quality Analysis') {
+            steps {
+                script {
+                    withSonarQubeEnv('SonarQube') {  // Replace with the actual SonarQube server name
+                        bat 'sonar-scanner -Dsonar.projectKey=NotesApp -Dsonar.sources=. -Dsonar.host.url=http://localhost:9000 -Dsonar.login=%SONAR_TOKEN%' 
+                    }
                 }
             }
+        }
+
+        stage('Deploy to Docker Container') {
             steps {
                 script {
                     bat 'docker run -d -p 3000:3000 biniltomjose12780/nodejs-image-demo'
@@ -55,7 +59,7 @@ pipeline {
             echo 'Pipeline stages completed.'
         }
         success {
-            echo 'Pipeline succeeded!'
+            echo 'Pipeline executed successfully!'
         }
         failure {
             echo 'One or more stages failed!'
