@@ -5,39 +5,45 @@ pipeline {
 
     environment {
         MONGODB_URI = 'mongodb+srv://admin03:1234567890@userauthenticationapi.atdala8.mongodb.net/'
-        SONARQUBE_SERVER = 'http://localhost:9000'  // Replace with the URL of your SonarQube server
+        SONARQUBE_SERVER = 'http://localhost:9000'  // Replace with your SonarQube server URL
     }
 
     stages {
+        // Stage 1: Checkout code from Git repository
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/BinilTomJose1278/NotesApp.git'
+                git branch: 'master', url: 'https://github.com/BinilTomJose1278/NotesApp.git'  // Replace with your repo URL
             }
         }
 
+        // Stage 2: Build Docker image
         stage('Build Docker Image') {
             steps {
                 script {
-                    bat 'docker build -t biniltomjose12780/nodejs-image-demo .'
+                    bat 'docker build -t biniltomjose12780/nodejs-image-demo .'  // Replace with your Docker image details
                 }
             }
         }
 
+        // Stage 3: Run Tests
         stage('Test') {
             steps {
                 script {
+                    // Install dependencies
                     bat 'npm install'
+                    
+                    // Run the tests with the environment variable
                     bat 'npm test -- --forceExit --detectOpenHandles'
                 }
             }
         }
 
-        // Code Quality Analysis Stage using SonarQube and Jenkins credentials
+        // Stage 4: Code Quality Analysis using SonarQube
         stage('Code Quality Analysis') {
             steps {
                 script {
-                    withSonarQubeEnv('SonarQube') {  // Match the name of your SonarQube server configuration in Jenkins
-                        withCredentials([string(credentialsId: 'sonarqube-token', variable: 'SONAR_TOKEN')]) {
+                    withSonarQubeEnv('SonarQube') {  // Ensure 'SonarQube' matches the server name you configured in Jenkins
+                        withCredentials([string(credentialsId: 'SonarQubeAuthenticationToken', variable: 'SONAR_TOKEN')]) {
                             bat 'sonar-scanner -Dsonar.projectKey=NotesApp -Dsonar.sources=. -Dsonar.host.url=$SONARQUBE_SERVER -Dsonar.login=$SONAR_TOKEN'
                         }
                     }
@@ -45,6 +51,7 @@ pipeline {
             }
         }
 
+        // Stage 5: Deploy to Docker Container
         stage('Deploy to Docker Container') {
             steps {
                 script {
@@ -61,10 +68,10 @@ pipeline {
             echo 'Pipeline stages completed.'
         }
         success {
-            echo 'Build, Test, Code Quality, and Deployment completed successfully!'
+            echo 'Build, Test, Code Quality Analysis, and Deployment completed successfully!'
         }
         failure {
-            echo 'Pipeline failed.'
+            echo 'One or more stages failed!'
         }
     }
 }
