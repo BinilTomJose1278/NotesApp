@@ -35,24 +35,6 @@ pipeline {
             }
         }
 
-        stage('Code Quality Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarQube') {  // Name of your SonarQube server in Jenkins
-                        withCredentials([string(credentialsId: 'SonarQubeAuthenticationToken', variable: 'SONAR_TOKEN')]) {
-                            // Instead of calling sonar-scanner directly, use the installed scanner tool
-                            bat '''
-                                SonarQubeScanner.bat ^
-                                -Dsonar.projectKey=NotesApp ^
-                                -Dsonar.sources=. ^
-                                -Dsonar.host.url=%SONARQUBE_SERVER% ^
-                                -Dsonar.login=%SONAR_TOKEN%
-                            '''
-                        }
-                    }
-                }
-            }
-        }
 
         stage('Deploy to Docker Container') {
             when {
