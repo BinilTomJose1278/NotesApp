@@ -7,41 +7,38 @@ pipeline {
         SONARQUBE_SERVER = 'SonarQube'  // The name of the SonarQube server configured in Jenkins
     }
 
+    tools {
+        sonarQube 'SonarQubeScanner'  // This should match the name you gave when adding SonarQube Scanner in Global Tool Configuration
+    }
+
     stages {
-        // Stage 1: Checkout code from Git repository
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/BinilTomJose1278/NotesApp.git'  // Replace with your repo URL
+                git branch: 'master', url: 'https://github.com/BinilTomJose1278/NotesApp.git'
             }
         }
 
-        // Stage 2: Build Docker image
         stage('Build Docker Image') {
             steps {
                 script {
-                    bat 'docker build -t biniltomjose12780/nodejs-image-demo .'  // Replace with your Docker image details
+                    bat 'docker build -t biniltomjose12780/nodejs-image-demo .'
                 }
             }
         }
 
-        // Stage 3: Run Tests
         stage('Test') {
             steps {
                 script {
-                    // Install dependencies
                     bat 'npm install'
-                    
-                    // Run the tests with the environment variable
                     bat 'npm test -- --forceExit --detectOpenHandles'
                 }
             }
         }
 
-        // Stage 4: Code Quality Analysis using SonarQube
         stage('Code Quality Analysis') {
             steps {
                 script {
-                    withSonarQubeEnv('SonarQube') {
+                    withSonarQubeEnv('SonarQube') {  // Name of your SonarQube server in Jenkins
                         withCredentials([string(credentialsId: 'SonarQubeAuthenticationToken', variable: 'SONAR_TOKEN')]) {
                             bat '''
                                 sonar-scanner ^
@@ -56,7 +53,6 @@ pipeline {
             }
         }
 
-        // Stage 5: Deploy to Docker Container
         stage('Deploy to Docker Container') {
             when {
                 expression {
