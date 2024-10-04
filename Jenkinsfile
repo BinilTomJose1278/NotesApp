@@ -42,6 +42,7 @@ pipeline {
                 script {
                     // Run the tests with the environment variable
                     bat 'npm test'
+                    bat 'npm test -- --forceExit --detectOpenHandles'
                 }
             }
         }
