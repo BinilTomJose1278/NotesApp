@@ -8,8 +8,7 @@ pipeline {
     }
 
     tools {
-        // Corrected tool type for SonarQube Scanner
-        'hudson.plugins.sonar.SonarRunnerInstallation' 'SonarQubeScanner'
+        'hudson.plugins.sonar.SonarRunnerInstallation' 'SonarQubeScanner'  // Correct tool type
     }
 
     stages {
@@ -41,8 +40,9 @@ pipeline {
                 script {
                     withSonarQubeEnv('SonarQube') {  // Name of your SonarQube server in Jenkins
                         withCredentials([string(credentialsId: 'SonarQubeAuthenticationToken', variable: 'SONAR_TOKEN')]) {
+                            // Instead of calling sonar-scanner directly, use the installed scanner tool
                             bat '''
-                                sonar-scanner ^
+                                SonarQubeScanner.bat ^
                                 -Dsonar.projectKey=NotesApp ^
                                 -Dsonar.sources=. ^
                                 -Dsonar.host.url=%SONARQUBE_SERVER% ^
