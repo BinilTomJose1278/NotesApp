@@ -4,8 +4,7 @@ pipeline {
     }
 
     environment {
-        MONGODB_URI = 'mongodb+srv://admin03:1234567890@userauthenticationapi.atdala8.mongodb.net/'
-        SONARQUBE_SERVER = 'http://localhost:9000'  // Replace with your SonarQube server URL
+        SONARQUBE_SERVER = 'SonarQube'  // The name of the SonarQube server configured in Jenkins
     }
 
     stages {
@@ -42,9 +41,15 @@ pipeline {
         stage('Code Quality Analysis') {
             steps {
                 script {
-                    withSonarQubeEnv('SonarQube') {  // Ensure 'SonarQube' matches the server name you configured in Jenkins
+                    withSonarQubeEnv('SonarQube') {
                         withCredentials([string(credentialsId: 'SonarQubeAuthenticationToken', variable: 'SONAR_TOKEN')]) {
-                            bat 'sonar-scanner -Dsonar.projectKey=NotesApp -Dsonar.sources=. -Dsonar.host.url=$SONARQUBE_SERVER -Dsonar.login=$SONAR_TOKEN'
+                            bat """
+                                sonar-scanner \
+                                -Dsonar.projectKey=NotesApp \
+                                -Dsonar.sources=. \
+                                -Dsonar.host.url=$SONARQUBE_SERVER \
+                                -Dsonar.login=$SONAR_TOKEN
+                            """
                         }
                     }
                 }
@@ -53,11 +58,14 @@ pipeline {
 
         // Stage 5: Deploy to Docker Container
         stage('Deploy to Docker Container') {
+            when {
+                expression {
+                    currentBuild.result == null || currentBuild.result == 'SUCCESS'
+                }
+            }
             steps {
                 script {
-                    bat 'docker stop notesapp-container || true'
-                    bat 'docker rm notesapp-container || true'
-                    bat 'docker run -d --name notesapp-container -p 3000:3000 biniltomjose12780/nodejs-image-demo'
+                    bat 'docker run -d -p 3000:3000 biniltomjose12780/nodejs-image-demo'
                 }
             }
         }
@@ -68,7 +76,7 @@ pipeline {
             echo 'Pipeline stages completed.'
         }
         success {
-            echo 'Build, Test, Code Quality Analysis, and Deployment completed successfully!'
+            echo 'Pipeline succeeded!'
         }
         failure {
             echo 'One or more stages failed!'
