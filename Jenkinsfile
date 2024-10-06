@@ -1,27 +1,19 @@
 pipeline {
     agent {
-        label 'docker-agent'
-    }
-
-    environment {
-        SONAR_TOKEN = credentials('SonarQubeAuthenticationToken')  // Use the correct SonarQube token ID
-    }
-
-    tools {
-        'hudson.plugins.sonar.SonarRunnerInstallation' 'SonarQubeScanner'  // Correct tool type for SonarQube Scanner
+        label 'docker-agent'  // Ensure this is the correct Docker agent
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/BinilTomJose1278/NotesApp.git'
+                git branch: 'master', url: 'https://github.com/BinilTomJose1278/NotesApp.git'  // Replace with your GitHub repo URL
             }
         }
 
         stage('Build Docker Image') {
             steps {
                 script {
-                    bat 'docker build -t biniltomjose12780/nodejs-image-demo .'
+                    bat 'docker build -t biniltomjose12780/nodejs-image-demo .'  // Building the Docker image
                 }
             }
         }
@@ -29,18 +21,27 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    bat 'npm install'
-                    bat 'npm test -- --forceExit --detectOpenHandles'
+                    bat 'npm install'  // Installing dependencies
+                    bat 'npm test -- --forceExit --detectOpenHandles'  // Running tests
                 }
             }
         }
 
-       
+        stage('Code Climate Analysis') {
+            steps {
+                script {
+                    docker.image('codeclimate/codeclimate').inside {
+                        // Running Code Climate analysis within the Docker container
+                        bat 'codeclimate analyze'
+                    }
+                }
+            }
+        }
 
         stage('Deploy to Docker Container') {
             steps {
                 script {
-                    bat 'docker run -d -p 3000:3000 biniltomjose12780/nodejs-image-demo'
+                    bat 'docker run -d -p 3000:3000 biniltomjose12780/nodejs-image-demo'  // Running the app in a Docker container
                 }
             }
         }
