@@ -1,45 +1,37 @@
 pipeline {
     agent {
-        label 'docker-agent'
+        docker {
+            image 'biniltomjose12780/nodejs-image-demo'  // Docker image with Node.js 18 and SonarScanner installed
+            reuseNode true  // Reuse the same container for all stages
+        }
     }
 
     environment {
-        SONAR_TOKEN = credentials('SonarQubeAuthenticationToken')  // Use the correct SonarQube token ID
-    }
-
-    tools {
-        'hudson.plugins.sonar.SonarRunnerInstallation' 'SonarQubeScanner'  // Correct tool type for SonarQube Scanner
+        SONAR_TOKEN = credentials('SonarQubeAuthenticationToken')  // SonarQube token for authentication
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'master', url: 'https://github.com/BinilTomJose1278/NotesApp.git'
+                git branch: 'master', url: 'https://github.com/BinilTomJose1278/NotesApp.git'  // Adjust to your repository
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Install Dependencies and Test') {
             steps {
                 script {
-                    bat 'docker build -t biniltomjose12780/nodejs-image-demo .'
+                    // Install dependencies and run tests within the container
+                    sh 'npm install'  // Installing dependencies
+                    sh 'npm test -- --forceExit --detectOpenHandles'  // Running tests
                 }
             }
         }
 
-        stage('Test') {
+        stage('SonarQube Code Quality Analysis') {
             steps {
                 script {
-                    bat 'npm install'
-                    bat 'npm test -- --forceExit --detectOpenHandles'
-                }
-            }
-        }
-
-        stage('Code Quality Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarQube') {  // Replace with the actual SonarQube server name
-                        bat 'sonar-scanner -Dsonar.projectKey=NotesApp -Dsonar.sources=. -Dsonar.host.url=http://localhost:9000 -Dsonar.login=%SONAR_TOKEN%' 
+                    withSonarQubeEnv('SonarQube') {  // Use SonarQube configuration from Jenkins
+                        sh 'sonar-scanner -Dsonar.projectKey=NotesApp -Dsonar.sources=. -Dsonar.host.url=http://localhost:9000 -Dsonar.login=$SONAR_TOKEN'  // Run SonarScanner inside the Docker container
                     }
                 }
             }
@@ -48,7 +40,8 @@ pipeline {
         stage('Deploy to Docker Container') {
             steps {
                 script {
-                    bat 'docker run -d -p 3000:3000 biniltomjose12780/nodejs-image-demo'
+                    // Deploy the application using Docker
+                    sh 'docker run -d -p 3000:3000 biniltomjose12780/nodejs-image-demo'
                 }
             }
         }
@@ -56,7 +49,7 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline stages completed.'
+            echo 'Pipeline execution completed.'
         }
         success {
             echo 'Pipeline executed successfully!'
