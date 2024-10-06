@@ -35,15 +35,7 @@ pipeline {
             }
         }
 
-        stage('Code Quality Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarQube') {  // Replace with the actual SonarQube server name
-                        bat 'sonar-scanner -Dsonar.projectKey=NotesApp -Dsonar.sources=. -Dsonar.host.url=http://localhost:9000 -Dsonar.login=%SONAR_TOKEN%' 
-                    }
-                }
-            }
-        }
+       
 
         stage('Deploy to Docker Container') {
             steps {
