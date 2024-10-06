@@ -30,10 +30,13 @@ pipeline {
         stage('Code Climate Analysis') {
             steps {
                 script {
-                    // Convert Windows path (e.g., C:/jenkins/...) to Linux-style path (/c/jenkins/...) for Docker
+                    // Convert the Jenkins workspace path from Windows format to Linux format for Docker
                     def workspacePath = pwd().replaceAll('C:', '/c').replaceAll('\\\\', '/')
 
-                    // Use Docker image for Code Climate analysis with corrected Linux-style paths
+                    // Print out the converted workspace path for debugging (optional, you can remove this later)
+                    echo "Converted workspace path: ${workspacePath}"
+
+                    // Run Code Climate analysis inside the Docker container with the corrected Linux-style path
                     docker.image('codeclimate/codeclimate').inside("-v ${workspacePath}:${workspacePath} -w ${workspacePath}") {
                         bat 'codeclimate analyze'  // Run Code Climate analysis
                     }
