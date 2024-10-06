@@ -1,0 +1,15 @@
+version: "2"
+checks:
+  argument_count:
+    enabled: true
+  complexity:
+    enabled: true
+  duplication:
+    enabled: true
+plugins:
+  duplication:
+    config:
+      languages:
+        - javascript
+exclude_patterns:
+  - "tests/*"
