@@ -15,7 +15,7 @@ RUN npm install --production
 COPY . .
 
 # Expose the port that your application will run on
-EXPOSE 3000
+EXPOSE 5000
 
 # Use a non-root user for running the application
 USER node
