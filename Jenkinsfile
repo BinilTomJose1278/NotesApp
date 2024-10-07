@@ -48,7 +48,7 @@ pipeline {
         stage('Deploy to Docker Container') {
             steps {
                 script {
-                    bat 'docker run -d -p 3000:3000 biniltomjose12780/nodejs-image-demo'  // Deploy the app in Docker
+                    bat 'docker run -d -p 5000:5000 biniltomjose12780/nodejs-image-demo'  // Deploy the app in Docker on port 5000
                 }
             }
         }
